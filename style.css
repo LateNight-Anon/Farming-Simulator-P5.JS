@@ -1,0 +1,13 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+
+#customDialouge {
+  display: none;
+  background-color: #FFFFF;
+  text-align: center;
+}
