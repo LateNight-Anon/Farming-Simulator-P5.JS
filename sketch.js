@@ -1,3 +1,10 @@
+/*
+
+A farming game written in p5.js. Its supposed to be ran in the p5.js web editor though it should still work if reimplamented
+on a regular web page. MIT liscense or something like that.
+
+*/
+
 class tile {
   constructor(sprite,state) {
     "use strict";
@@ -114,9 +121,7 @@ function newLog(item) {
   "use strict";
   console.log(item);
   logs.unshift(item);
-  if (logs.length > 5) {
-    logs.pop();
-  }
+  if (logs.length > 5) logs.pop();
 }
 
 function moneyGainAndHunger() { //gives the player money and subtracts all animals hunger var on a 1 second interval
@@ -238,9 +243,8 @@ function sellAnimals() {
     if (isNaN(count) || count > animals.length || animals < 0) {
       newLog("invalid response")
     } else {
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count; i++)
         animals.pop();
-      }
       moneyGain = calculateGain();
       break;
     }
@@ -431,12 +435,8 @@ function calculateGain() {
   for (let i = 0; i < animals.length; i++) { //checks state of all animals
     if (animals[i].hunger > 0) {
       switch (animals[i].state) {
-        case "cow":
-          calculation++;
-          break;
-        case "sheep":
-          calculation+=2;
-          break;
+        case "cow": calculation++; break;
+        case "sheep": calculation+=2; break;
       }
     }
   }
@@ -445,11 +445,8 @@ function calculateGain() {
 
 function keyPressed() {
   "use strict";
-  if (keyCode === LEFT_ARROW) { //moves everything to the left
-    globalShift-=15;
-  } else if (keyCode === RIGHT_ARROW) { //moves everything to the right
-    globalShift+=15;
-  }
+  if (keyCode === LEFT_ARROW) globalShift-=15; //moves everything to the left
+  else if (keyCode === RIGHT_ARROW) globalShift+=15; //moves everything to the right
 }
 
 function levelUp(levelUpCost) {
@@ -464,6 +461,7 @@ function levelUp(levelUpCost) {
 }
 
 function saveStringGenerate() {
+  "use strict";
   function perNumEncryption(thingStr) {
     for (let i = 0; i < thingStr.length; i++) {
       switch (thingStr[i]) {
@@ -504,32 +502,24 @@ function saveStringGenerate() {
   saveStr += '|' + String(tileCountChange) + '.';
   for (let i = 0; i < tiles.length; i++) {
     switch (tiles[i].state) {
-      case "grass":
-        grassCount++;
-        break;
-      case "dirt":
-        dirtCount++;
-        break;
-      case "flower":
-        flowerCount++;
-        break;
+      case "grass": grassCount++; break;
+      case "dirt": dirtCount++; break;
+      case "flower": flowerCount++; break;
     }
   }
   saveStr += String(grassCount + tileCountChange) + '.' + String(dirtCount + tileCountChange) + '.' + String(flowerCount + tileCountChange) + '|';
   for (let i = 0; i < 4; i++) 
     saveStr += chars[Math.floor(Math.random() * 4)];
+  saveStr += '.';
   let cowCount = 0;
   let sheepCount = 0;
   for (let i = 0; i < animals.length; i++) {
     switch (animals[i].state) {
-      case "sheep":
-        sheepCount++;
-        break;
-      case "cow":
-        cowCount++;
-        break;
+      case "sheep": sheepCount++; break;
+      case "cow": cowCount++; break;
     }
   }
+  console.log(str(cowCount) + " =cows. " + str(sheepCount) + " =sheep");
   perNumEncryption(String(cowCount));
   saveStr += '.';
   perNumEncryption(String(sheepCount));
@@ -556,50 +546,48 @@ function loadSaveString() {
     return Number(numStr);
   }
   function XinArrY(X, Y) {
-    for (let i = 0; i < Y.length; i++) {
+    for (let i = 0; i < Y.length; i++)
       if (X === Y[i]) return true;
-    }
     return false;
   }
   let saveStr = prompt("input your save string");
-  if (!confirm("are you happy with" + saveStr)) {
-      return;
+  if (!confirm("are you happy with" + saveStr)) return;
+  if (saveStr === undefined) {
+    return alert("you inputted nothing stupid");
   }
   saveStr = saveStr.split('|');
-  console.log(saveStr);
   const ceaser = saveStr[0][0];
   let moneyStr = "";
   const saltedChars = ['@','!','&','%'];
-  for (let i = 1; i < saveStr[0].length; i++) {
+  for (let i = 1; i < saveStr[0].length; i++)
     if (!XinArrY(saveStr[0][i], saltedChars)) moneyStr += String(saveStr[0][i].charCodeAt(0) - ceaser - 65);
-  }
   money = Number(moneyStr);
   let levelStr = "";
-  for (let i = 0; i < saveStr[1].length; i++) {
-    if (saltedChars.indexOf(saveStr[1][i]) < 0) {
-      levelStr += saveStr[1][i];
-    }
-  }
+  for (let i = 0; i < saveStr[1].length; i++)
+    if (saltedChars.indexOf(saveStr[1][i]) < 0) levelStr += saveStr[1][i];
   playerLevel = Number(levelStr);
-  saveStr[3].split('.');
-  const tileCountChange = Number(saveStr[3][0]);
-  for (let i = 0; i <  Number(saveStr[3][1]) - tileCountChange; i++)
+  saveStr[2] = saveStr[2].split('.');
+  const tileCountChange = Number(saveStr[2][0]);
+  for (let i = 0; i <  Number(saveStr[2][1]) - tileCountChange; i++)
     tiles.push(new tile(grass,"grass"));
-  for (let i = 0; i < Number(saveStr[3][2]) - tileCountChange; i++)
+  for (let i = 0; i < Number(saveStr[2][2]) - tileCountChange; i++)
     tiles.push(new tile(dirt,"dirt"));
-  for (let i = 0; i < Number(saveStr[3][3]) - tileCountChange; i++)
+  for (let i = 0; i < Number(saveStr[2][3]) - tileCountChange; i++)
     tiles.push(new tile(flower,"flower"));
-  saveStr[4].split('.');
+  saveStr[3] = saveStr[3].split('.');
+  console.log("saveStr = ", saveStr[3]);
   let cowEncryptedStr = "";
-  for (let i = 3; i < saveStr[4][0].length; i++)
-    cowEncryptedStr += saveStr[4][0][i];
-  const decryptedCowCount = perNumDecryption(cowEncryptedString);
+  for (let i = 3; i < saveStr[3][1].length; i++)
+    cowEncryptedStr += saveStr[3][1][i];
+  const decryptedCowCount = perNumDecryption(cowEncryptedStr);
+  console.log(decryptedCowCount);
   for (let i = 0; i < decryptedCowCount; i++)
     animals.push(new animal(cow,"cow"));
-  let sheepEncryptedString = "";
-  for (let i = 0; i < saveStr[4][1].length; i++)
-    sheepEncryptedString += saveStr[4][1][i];
-  const decryptedSheepCount = perNumDecryption(sheepEncryptedString);
+  let sheepEncryptedStr = "";
+  for (let i = 0; i < saveStr[3][2].length; i++)
+    sheepEncryptedStr += saveStr[3][2][i];
+  const decryptedSheepCount = perNumDecryption(sheepEncryptedStr);
+  console.log(decryptedSheepCount);
   for (let i = 0; i < decryptedSheepCount; i++)
     animals.push(new animal(sheep,"sheep"));
   calculateGain();
